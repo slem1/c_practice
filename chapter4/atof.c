@@ -7,17 +7,17 @@ int getLine(char s[]);
 
 #define MAX_LINE 1000
 
-int main(){
+// int main(){
 
-    double atof(char s[]);
+//     double atof(char s[]);
 
-    char line[MAX_LINE];
-    double res = 0;
-    while(getLine(line) > 0){
-        res += atof_scientific(line);
-        printf("%f\n", res);
-    }
-}
+//     char line[MAX_LINE];
+//     double res = 0;
+//     while(getLine(line) > 0){
+//         res += atof_scientific(line);
+//         printf("%f\n", res);
+//     }
+// }
 
 
 double atof(char s[]){
