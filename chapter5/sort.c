@@ -1,28 +1,78 @@
 #include <stdio.h>
+#include <string.h>
 
-#define LINE_MAX_SIZE 1000
+#define MAXLEN 1000
+#define MAXLINES 5000
 
-int _getline(char *line);
+int _getline(char *line, int maxlength);
+int readlines(char *lineptr[], int maxlines);
+void printlines(char *lines[], int nlines);
 
-int main(){
+int main()
+{
+    char *lines[MAXLINES];
+    int nlines = readlines(lines, MAXLINES);
+    printlines(lines, nlines);
+}
 
-    char line[LINE_MAX_SIZE];
+int readlines(char *lineptr[], int maxlines)
+{
 
-    while(_getline(line) != EOF){
-        printf("%s", line);
+    int len;
+    char line[MAXLEN];
+    int nlines = 0;
+
+    while ((len = _getline(line, MAXLEN)) != 0)
+    {
+        printf("line is %s(%d)\n", line, len);
+
+        if (nlines >= maxlines)
+        {
+            return -1;
+        }
+        else
+        {
+            char lineStore[len];
+            strcpy(lineStore, line);
+             printf("lineStore is %s(%d)\n", lineStore, len);
+            lineptr[nlines++] = lineStore;
+              printf("lineptr is %s(%d)\n", lineptr[nlines-1], len);
+        }
+    }
+
+    return nlines;
+}
+
+void printlines(char *lines[], int nlines){
+    printf("number of lines: %d\n", nlines);
+    for (int i=0; i< nlines; i++){
+        printf("line %d: %s", i, lines[i]);
     }
 }
 
-int _getline(char *line){
+int _getline(char *line, int maxlength)
+{
 
     int c;
+    int i = 0;
 
-    while((c=getchar()) != EOF){
-        *line++ = c;
-
-        if(c == '\n'){
+    while ((c = getchar()) != EOF)
+    {
+        if (i < maxlength -1)
+        {
+            if (c == '\n')
+            {
+                *line = '\0';
+                return i;
+            }else {
+                *line++ = c;
+                i++;
+            }
+        }
+        else
+        {
             *line = '\0';
-            return c;
+            return i;
         }
     }
 
