@@ -4,6 +4,14 @@
 #define MAXLEN 1000
 #define MAXLINES 5000
 
+#define MAX_ALLOC 10000
+
+static char allocbuf[MAX_ALLOC];
+static char* ptralloc = allocbuf;
+
+char* alloc(int);
+void afree(char *);
+
 int _getline(char *line, int maxlength);
 int readlines(char *lineptr[], int maxlines);
 void printlines(char *lines[], int nlines);
@@ -13,6 +21,26 @@ int main()
     char *lines[MAXLINES];
     int nlines = readlines(lines, MAXLINES);
     printlines(lines, nlines);
+}
+
+char* alloc(int len){
+
+    if(ptralloc - allocbuf + len > MAX_ALLOC){
+      printf("cannot allocate \n");
+      return 0;
+    }else {
+        char * result = ptralloc;
+        ptralloc += len;
+        return result;
+    }  
+}
+
+void afree(char *p){
+  if(p >= allocbuf && p < allocbuf + MAX_ALLOC){
+    ptralloc = p;
+  } else {
+    printf("invalid afree");
+  }
 }
 
 int readlines(char *lineptr[], int maxlines)
