@@ -7,40 +7,66 @@
 #define MAX_ALLOC 10000
 
 static char allocbuf[MAX_ALLOC];
-static char* ptralloc = allocbuf;
+static char *ptralloc = allocbuf;
 
-char* alloc(int);
+char *alloc(int);
 void afree(char *);
 
-int _getline(char *line, int maxlength);
-int readlines(char *lineptr[], int maxlines);
-void printlines(char *lines[], int nlines);
+int _getline(char *, int);
+int readlines(char *[], int );
+void printlines(char *[], int);
+
+
+void swap(char *[], int, int);
+
+void qsort(char *[], int);
+void _qsort(char *[], int , int );
+void printArray(char *[]);
+int partition(char*[], int, int);
+int _strcmp(char *s, char *t);
 
 int main()
 {
+    char *values[] = {"Hello","World","Tree","Lake","Horse","Cup","Cofffe","Manga","C"};
+    qsort(values, 9);
+    printArray(values);
+
     char *lines[MAXLINES];
     int nlines = readlines(lines, MAXLINES);
-    printlines(lines, nlines);
+    qsort(lines, nlines);
+
+    printArray(lines);
+
+
+
 }
 
-char* alloc(int len){
+char *alloc(int len)
+{
 
-    if(ptralloc - allocbuf + len > MAX_ALLOC){
-      printf("cannot allocate \n");
-      return 0;
-    }else {
-        char * result = ptralloc;
+    if (ptralloc - allocbuf + len > MAX_ALLOC)
+    {
+        printf("cannot allocate \n");
+        return 0;
+    }
+    else
+    {
+        char *result = ptralloc;
         ptralloc += len;
         return result;
-    }  
+    }
 }
 
-void afree(char *p){
-  if(p >= allocbuf && p < allocbuf + MAX_ALLOC){
-    ptralloc = p;
-  } else {
-    printf("invalid afree");
-  }
+void afree(char *p)
+{
+    if (p >= allocbuf && p < allocbuf + MAX_ALLOC)
+    {
+        ptralloc = p;
+    }
+    else
+    {
+        printf("invalid afree");
+    }
 }
 
 int readlines(char *lineptr[], int maxlines)
@@ -52,29 +78,27 @@ int readlines(char *lineptr[], int maxlines)
 
     while ((len = _getline(line, MAXLEN)) != 0)
     {
-        printf("line is %s(%d)\n", line, len);
-
         if (nlines >= maxlines)
         {
             return -1;
         }
         else
         {
-            char lineStore[len];
-            strcpy(lineStore, line);
-             printf("lineStore is %s(%d)\n", lineStore, len);
-            lineptr[nlines++] = lineStore;
-              printf("lineptr is %s(%d)\n", lineptr[nlines-1], len);
+            char * lineBuf = alloc(len + 1);
+            strcpy(lineBuf, line);
+            lineptr[nlines++] = lineBuf;
         }
     }
 
     return nlines;
 }
 
-void printlines(char *lines[], int nlines){
+void printlines(char *lines[], int nlines)
+{
     printf("number of lines: %d\n", nlines);
-    for (int i=0; i< nlines; i++){
-        printf("line %d: %s", i, lines[i]);
+    for (int i = 0; i < nlines; i++)
+    {
+        printf("line %d: %s\n", i, lines[i]);
     }
 }
 
@@ -86,23 +110,74 @@ int _getline(char *line, int maxlength)
 
     while ((c = getchar()) != EOF)
     {
-        if (i < maxlength -1)
-        {
-            if (c == '\n')
-            {
-                *line = '\0';
-                return i;
-            }else {
-                *line++ = c;
-                i++;
-            }
-        }
-        else
+        if (c == '\n')
         {
             *line = '\0';
-            return i;
+            return i;   
+        } else {
+            *line++ = c;
+            i++;
         }
     }
 
     return EOF;
+}
+
+void qsort(char *array[], int len){
+    _qsort(array, 0, len - 1);
+}
+
+void _qsort(char *array[], int lo, int hi){
+
+    int pivot;
+
+    if( hi > lo ){
+        pivot = partition(array, lo, hi);
+        _qsort(array, lo, pivot -1);
+        _qsort(array, pivot + 1, hi);
+    }
+}
+
+int partition(char *array[], int low, int high){
+    char* pivot = array[high];
+    int i = low - 1;
+    int j = low;
+
+    for(int j = low; j <= high - 1; j++){
+        if(_strcmp(array[j], pivot)<0){
+            i++;
+            swap(array, i, j);
+        }
+    }
+
+    swap(array, i + 1, high);
+
+    return i +1;
+}
+
+void swap(char *array[], int i, int j){
+    char* tmp = array[i];
+    array[i] = array[j];
+    array[j] = tmp;
+}
+
+void printArray(char *array[]){
+     for(int i =0; i< 9; i++){
+        printf("%s,", array[i]);
+    }
+       printf("\n");
+}
+
+int _strcmp(char *s, char *t)
+{
+
+    for (; *s == *t && *s != '\0' && *t != '\0'; s++, t++)
+        ;
+
+    if (*s == '\0' && *t == '\0')
+    {
+        return 0;
+    }
+
+    return *s - *t;
 }
