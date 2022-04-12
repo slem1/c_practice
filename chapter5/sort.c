@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define MAXLEN 1000
 #define MAXLINES 5000
@@ -17,27 +18,29 @@ int readlines(char *[], int );
 void printlines(char *[], int);
 
 
-void swap(char *[], int, int);
+void swap(void *[], int, int);
 
-void qsort(char *[], int);
-void _qsort(char *[], int , int );
-void printArray(char *[]);
-int partition(char*[], int, int);
+void _qsort(char *[], int,int (*comp)(void * ,void *));
+void __qsort(char *[], int , int, int (*comp)(void * ,void *) );
+void printArray(char *[], int);
+int partition(char*[], int, int, int (*comp)(void * ,void *));
 int _strcmp(char *s, char *t);
+int numcmp(char *s, char *t);
 
 int main()
 {
     char *values[] = {"Hello","World","Tree","Lake","Horse","Cup","Cofffe","Manga","C"};
-    qsort(values, 9);
-    printArray(values);
+    _qsort(values, 9, strcmp);
+    printArray(values,9);
 
     char *lines[MAXLINES];
     int nlines = readlines(lines, MAXLINES);
-    qsort(lines, nlines);
+    _qsort(lines, nlines,strcmp);
+    printArray(lines, nlines);
 
-    printArray(lines);
-
-
+    char *nums[] = {"5","3", "9", "10", "2"};
+    _qsort(nums, 5, numcmp);
+    printArray(nums,5);
 
 }
 
@@ -123,28 +126,28 @@ int _getline(char *line, int maxlength)
     return EOF;
 }
 
-void qsort(char *array[], int len){
-    _qsort(array, 0, len - 1);
+void _qsort(char *array[], int len, int (*comp)(void * ,void *)){
+    __qsort(array, 0, len - 1, comp);
 }
 
-void _qsort(char *array[], int lo, int hi){
+void __qsort(char *array[], int lo, int hi, int (*comp)(void * ,void *)){
 
     int pivot;
 
     if( hi > lo ){
-        pivot = partition(array, lo, hi);
-        _qsort(array, lo, pivot -1);
-        _qsort(array, pivot + 1, hi);
+        pivot = partition(array, lo, hi, comp);
+        __qsort(array, lo, pivot -1, comp);
+        __qsort(array, pivot + 1, hi, comp);
     }
 }
 
-int partition(char *array[], int low, int high){
+int partition(char *array[], int low, int high, int (*comp)(void * ,void *)){
     char* pivot = array[high];
     int i = low - 1;
     int j = low;
 
     for(int j = low; j <= high - 1; j++){
-        if(_strcmp(array[j], pivot)<0){
+        if((*comp)(array[j], pivot)<0){
             i++;
             swap(array, i, j);
         }
@@ -155,14 +158,14 @@ int partition(char *array[], int low, int high){
     return i +1;
 }
 
-void swap(char *array[], int i, int j){
+void swap(void *array[], int i, int j){
     char* tmp = array[i];
     array[i] = array[j];
     array[j] = tmp;
 }
 
-void printArray(char *array[]){
-     for(int i =0; i< 9; i++){
+void printArray(char *array[], int size){
+     for(int i =0; i< size; i++){
         printf("%s,", array[i]);
     }
        printf("\n");
@@ -180,4 +183,18 @@ int _strcmp(char *s, char *t)
     }
 
     return *s - *t;
+}
+
+int numcmp(char *s, char *t){
+
+    double v1 = atof(s);
+    double v2 = atof(t);
+
+    if(v1 < v2){
+        return -1;
+    }else if(v1 > v2){
+        return 1;
+    }else{
+        return 0;
+    }
 }
