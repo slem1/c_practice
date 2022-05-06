@@ -31,7 +31,7 @@ enum _flags{
 
 int _fillbuf(_FILE *);
 int _flushbuf(int, _FILE *);
-_FILE *_fopen( char *, char *fil);
+_FILE *_fopen( char *, char *);
 
 #define feof(p) (((p)->flag & _EOF) != 0) 
 #define ferror(p) (((p)->flag & _ERR) != 0) 

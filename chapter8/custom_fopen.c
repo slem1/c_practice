@@ -14,7 +14,8 @@ int main(){
     _FILE *f = _fopen("file.txt", "r");
 
     if(f == NULL){
-        fprintf(stderr, "Une erreur est survenue");
+        fprintf(std
+        , "Une erreur est survenue");
         return -1;
     }
 
