@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 
 
 int main(int argc, char** args){
@@ -24,9 +25,22 @@ int main(int argc, char** args){
 	
 	char* line;
 	size_t len=0;
+	int expectedTokens = 2;
 
 	while(getline(&line, &len, csvFile) > 0){
-		printf("line is %s", line);	
-		
+		char** tokens = (char**) malloc(sizeof(char*) * expectedTokens);
+		char** tp = tokens;
+
+		int i = expectedTokens;
+		char* token;
+
+		token = strtok(line, ",");
+
+		while(token != NULL){
+			*tp++ = token;
+			token = strtok(NULL, ",");
+		}
 	};
+
+
 }
